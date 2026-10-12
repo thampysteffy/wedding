@@ -512,8 +512,11 @@
   }
   /* sits behind the embed, which paints opaque white over it once loaded */
   .rsvp-wait{
-    position:absolute;inset:0;margin:0;display:grid;place-content:center;
-    font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:#9C8E96;
+    position:absolute;inset:0;display:grid;place-content:center;gap:1.1rem;
+    justify-items:center;text-align:center;
+  }
+  .rsvp-wait p{
+    margin:0;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:#9C8E96;
   }
   /* a window onto the form, not a box taller than the screen: the form is
      multi-page, and its own scroll-to-top on "Next" only reads as movement
@@ -1060,8 +1063,11 @@
   </div>
 
   <div class="rsvp-frame">
-    <p class="rsvp-wait">Loading the form&hellip;</p>
-    <iframe class="rsvp-embed" title="RSVP form"
+    <div class="rsvp-wait" id="rsvpWait">
+      <p>Loading the form&hellip;</p>
+      <a class="btn" id="rsvpFallback" href="https://docs.google.com/forms/d/e/1FAIpQLSc51I_4nrLnO-jE5SpHRL5jxyUHKNQ36QM7ORwpnZc5m5PNvA/viewform" target="_blank" rel="noopener" hidden>Open the form in a new tab</a>
+    </div>
+    <iframe class="rsvp-embed" id="rsvpEmbed" title="RSVP form"
             src="https://docs.google.com/forms/d/e/1FAIpQLSc51I_4nrLnO-jE5SpHRL5jxyUHKNQ36QM7ORwpnZc5m5PNvA/viewform?embedded=true"
             frameborder="0" marginheight="0" marginwidth="0"></iframe>
   </div>
@@ -1365,6 +1371,17 @@
   tabs.forEach(function(t){
     t.addEventListener("click", function(){ setActive(t.getAttribute("data-tab")); });
   });
+
+  /* ---------- RSVP fallback ---------- */
+  /* .rsvp-wait is only ever hidden by the loaded iframe painting over it, so
+     a blocked or slow embed leaves "Loading the form..." showing forever.
+     Reveal the direct link after a few seconds; if the form did load, this
+     sits underneath it and is invisible anyway */
+  (function(){
+    var fallback = document.getElementById("rsvpFallback");
+    if (!fallback) return;
+    setTimeout(function(){ fallback.hidden = false; }, 3500);
+  })();
 })();
 </script>
 </body>
